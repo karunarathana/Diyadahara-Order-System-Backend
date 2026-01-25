@@ -1,6 +1,7 @@
 package com.diyadahara.orders_manage.service.impl;
 
 import com.diyadahara.orders_manage.config.CustomerStatus;
+import com.diyadahara.orders_manage.config.OrderStatus;
 import com.diyadahara.orders_manage.model.CustomerModel;
 import com.diyadahara.orders_manage.model.OrderItemModel;
 import com.diyadahara.orders_manage.model.OrderModel;
@@ -46,6 +47,7 @@ public class DashBoardServiceImpl implements DashBoardService {
             baseDashBoardResponse.setTodayOrders(allOrdersItems.size());
             baseDashBoardResponse.setAllProduct(allProduct.size());
             baseDashBoardResponse.setTotalRevenue(calculateTodayRevenue(allOrders));
+            baseDashBoardResponse.setCompletedOrders(calculateSuccessOrders(allOrders));
             baseDashBoardResponse.setPendingOrders(calculatePendingOrders(allOrders));
             logger.info("Method Execution Completed In sendAllDashBoardDetails |Response={}",baseDashBoardResponse);
             return baseDashBoardResponse;
@@ -65,7 +67,7 @@ public class DashBoardServiceImpl implements DashBoardService {
     private int calculatePendingOrders(List<OrderModel> customerOrders){
         int totalPendingOrder = 0;
         for(OrderModel items:customerOrders){
-            if(items.getStatus().equals(CustomerStatus.PENDING)){
+            if(items.getStatus().equals(OrderStatus.PENDING)){
                 totalPendingOrder+=1;
             }
         }
@@ -74,7 +76,7 @@ public class DashBoardServiceImpl implements DashBoardService {
     private int calculateCanselOrders(List<OrderModel> customerOrders){
         int totalCanselOrder = 0;
         for(OrderModel items:customerOrders){
-            if(items.getStatus().equals(CustomerStatus.SUSPENDED)){
+            if(items.getStatus().equals(OrderStatus.SUSPENDED)){
                 totalCanselOrder+=1;
             }
         }
@@ -83,7 +85,7 @@ public class DashBoardServiceImpl implements DashBoardService {
     private int calculateSuccessOrders(List<OrderModel> customerOrders){
         int totalSuccessOrder = 0;
         for(OrderModel items:customerOrders){
-            if(items.getStatus().equals(CustomerStatus.ACTIVE)){
+            if(items.getStatus().equals(OrderStatus.SOLD)){
                 totalSuccessOrder+=1;
             }
         }

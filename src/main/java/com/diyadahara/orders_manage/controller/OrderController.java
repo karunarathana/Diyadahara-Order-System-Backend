@@ -1,8 +1,8 @@
 package com.diyadahara.orders_manage.controller;
 
+import com.diyadahara.orders_manage.config.OrderStatus;
 import com.diyadahara.orders_manage.constant.APIConst;
 import com.diyadahara.orders_manage.dto.OrderDto;
-import com.diyadahara.orders_manage.model.OrderModel;
 import com.diyadahara.orders_manage.response.BaseOrderResponse;
 import com.diyadahara.orders_manage.service.OrderService;
 import jakarta.validation.Valid;
@@ -30,11 +30,20 @@ public class OrderController {
         logger.info("Request Completed IN createOrder |Response={}", response);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
     @RequestMapping(value = APIConst.VIEW_ALL_ORDER_SINGLE_CUSTOMER, method = RequestMethod.GET)
     public ResponseEntity<BaseOrderResponse> viewSingleOrder(@Valid @RequestParam("CusPhoneNumber") String phoneNumber) {
         logger.info("Request Started IN viewSingleOrder |Request={}", phoneNumber);
         BaseOrderResponse response = orderService.viewOrderByCustomerPhoneNumber(phoneNumber);
         logger.info("Request Completed IN viewSingleOrder |Response={}", response);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = APIConst.CHANGE_SINGLE_ORDER_STATUS, method = RequestMethod.POST)
+    public ResponseEntity<?> changeOrderStatus(@Valid @RequestParam("status") String status) {
+        logger.info("Request Started IN changeOrderStatus |Request={}", status);
+        String response = orderService.changeOrderStatus(1,status);
+        logger.info("Request Completed IN changeOrderStatus |Response={}", response);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
