@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: diyadahara-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: diyadahara
+    ports:
+      - "3307:3306"
+    networks:
+      - my-network
+    volumes:
+      - mysql_data:/var/lib/mysql
+  app:
+    build: .
+    container_name: diyadahara-order-app
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/diyadahara
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
