@@ -1,10 +1,8 @@
 package com.diyadahara.orders_manage.config;
 
-public enum CustomerStatus {
-    ACTIVE,
-    INACTIVE,
+public enum OrderStatus {
+    SOLD,
     SUSPENDED,
     PENDING,
     DELETED
 }
-

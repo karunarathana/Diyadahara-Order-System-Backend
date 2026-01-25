@@ -2,6 +2,7 @@ package com.diyadahara.orders_manage.model;
 
 
 import com.diyadahara.orders_manage.config.CustomerStatus;
+import com.diyadahara.orders_manage.config.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class OrderModel {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     @Builder.Default
-    private CustomerStatus status = CustomerStatus.PENDING;
+    private OrderStatus status = OrderStatus.PENDING;
 
     private double totalPrice;
 
@@ -48,11 +49,11 @@ public class OrderModel {
         this.orderId = orderId;
     }
 
-    public CustomerStatus getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CustomerStatus status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 

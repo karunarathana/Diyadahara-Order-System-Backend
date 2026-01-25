@@ -1,5 +1,6 @@
 package com.diyadahara.orders_manage.service.impl;
 
+import com.diyadahara.orders_manage.config.OrderStatus;
 import com.diyadahara.orders_manage.dto.OrderDto;
 import com.diyadahara.orders_manage.dto.OrderItemDto;
 import com.diyadahara.orders_manage.model.CustomerModel;
@@ -76,6 +77,19 @@ public class OrderServiceImpl implements OrderService {
             return baseOrderResponse;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String changeOrderStatus(int orderId,String status) {
+        logger.info("Method Execution Started IN changeOrderStatus |Status={}", status);
+        try {
+            int dbResponse = orderRepo.updateStatusNative(String.valueOf(OrderStatus.SOLD), (long)orderId);
+            System.out.println(dbResponse);
+            logger.info("Method Execution Completed IN changeOrderStatus |Response={}", dbResponse);
+            return "Update Successfully";
+        } catch (Exception e) {
+            return e.toString();
         }
     }
 
