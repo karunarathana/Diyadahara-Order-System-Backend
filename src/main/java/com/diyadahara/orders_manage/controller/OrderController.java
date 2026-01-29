@@ -1,6 +1,5 @@
 package com.diyadahara.orders_manage.controller;
 
-import com.diyadahara.orders_manage.config.OrderStatus;
 import com.diyadahara.orders_manage.constant.APIConst;
 import com.diyadahara.orders_manage.dto.OrderDto;
 import com.diyadahara.orders_manage.response.BaseOrderResponse;
@@ -40,10 +39,20 @@ public class OrderController {
     }
 
     @RequestMapping(value = APIConst.CHANGE_SINGLE_ORDER_STATUS, method = RequestMethod.POST)
-    public ResponseEntity<?> changeOrderStatus(@Valid @RequestParam("status") String status) {
-        logger.info("Request Started IN changeOrderStatus |Request={}", status);
-        String response = orderService.changeOrderStatus(1,status);
+    public ResponseEntity<?> changeOrderStatus(@Valid @RequestParam("orderItemId") int orderItemId) {
+        logger.info("Request Started IN changeOrderStatus |Request={}", orderItemId);
+        String response = orderService.changeOrderStatus(orderItemId);
         logger.info("Request Completed IN changeOrderStatus |Response={}", response);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    //Delete Order (First One Delete OrderIt An Order)
+    @RequestMapping(value = APIConst.DELETE_SINGLE_ORDER, method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteOrder(@Valid @RequestParam("orderId") int orderId) {
+        logger.info("Request Started IN deleteOrder |Request={}", orderId);
+        String response = orderService.deleteOrder(orderId);
+        logger.info("Request Completed IN deleteOrder |Response={}", response);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
 }

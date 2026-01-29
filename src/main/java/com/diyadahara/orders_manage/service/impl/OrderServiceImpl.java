@@ -39,12 +39,17 @@ public class OrderServiceImpl implements OrderService {
     public String createOrder(OrderDto orderDto) {
         logger.info("Method Execution Started IN createOrder |OrderDto={}", orderDto);
         try {
-            OrderModel saveOrder = orderRepo.save(genarateOrderModel(orderDto));
-            List<OrderItemModel> orderItemModels = orderItemRepo.saveAll(generateOrderItemModel(orderDto, saveOrder));
-            if (saveOrder != null) {
-                return "Order Placed Successfully";
+            List<OrderModel> orderModels = orderRepo.existsByCustomer(String.valueOf(orderDto.getCustomerId()));
+            if(orderModels.isEmpty()){
+                OrderModel saveOrder = orderRepo.save(genarateOrderModel(orderDto));
+                orderItemRepo.saveAll(generateOrderItemModel(orderDto, saveOrder));
+                if (saveOrder != null) {
+                    return "Order Placed Successfully";
+                }
+                return "Oops some error";
             }
-            return "Oops some error";
+            orderItemRepo.saveAll(upgradeOrderItemModel(orderDto, orderModels.get(0)));
+            return "Order Placed Successfully";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -63,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
                 baseOrderResponse.setOrderData(null);
                 return baseOrderResponse;
             }
-            OrderModel orderModel = orderRepo.existsByCustomer(customerModel.getCustomerID().toString());
+            List<OrderModel> orderModel = orderRepo.existsByCustomer(customerModel.getCustomerID().toString());
             if(orderModel == null){
                 baseOrderResponse.setStatusCode("200");
                 baseOrderResponse.setMsg("Customer Not have order");
@@ -72,7 +77,9 @@ public class OrderServiceImpl implements OrderService {
                 return baseOrderResponse;
             }
             baseOrderResponse.setOrderData(null);
-            allItem.addAll(orderItemRepo.getAllItemData(orderModel.getOrderId().toString()));
+            for (OrderModel orders : orderModel){
+                allItem.addAll(orderItemRepo.getAllItemData(orders.getOrderId()));
+            }
             baseOrderResponse.setItemData(allItem);
             return baseOrderResponse;
         } catch (Exception e) {
@@ -81,15 +88,37 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String changeOrderStatus(int orderId,String status) {
-        logger.info("Method Execution Started IN changeOrderStatus |Status={}", status);
+    public String changeOrderStatus(int orderId) {
+        logger.info("Method Execution Started IN changeOrderStatus |Status={}", orderId);
         try {
-            int dbResponse = orderRepo.updateStatusNative(String.valueOf(OrderStatus.SOLD), (long)orderId);
+            int dbResponse = orderItemRepo.updateStatusToSold(String.valueOf(OrderStatus.SOLD), (long)orderId);
             System.out.println(dbResponse);
             logger.info("Method Execution Completed IN changeOrderStatus |Response={}", dbResponse);
             return "Update Successfully";
         } catch (Exception e) {
             return e.toString();
+        }
+    }
+
+    @Override
+    public String deleteOrder(int orderId) {
+        logger.info("Method Execution Started IN deleteOrder |OrderId={}", orderId);
+        Long dbOrderId = 0L;
+        try {
+            List<OrderItemModel> allItemData = orderItemRepo.getAllItemDataByOrderItem((long) orderId); //Fetch match data itemCode= 22;
+            if(allItemData.isEmpty()){
+                return "Item Data Not Found";
+            }
+            dbOrderId = allItemData.get(0).getOrderId().getOrderId();
+            orderItemRepo.deleteOrderItems((long)orderId);
+            List<OrderItemModel> allItemDataByOrderItem = orderItemRepo.getAllItemDataByOrderId(dbOrderId);
+            if (allItemDataByOrderItem.isEmpty()){
+                orderRepo.deleteById(dbOrderId);
+                return "Order Delete Successfully";
+            }
+            return "Order Delete Successfully";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -101,7 +130,25 @@ public class OrderServiceImpl implements OrderService {
             orderItemModel.setPrice(data.getPrice());
             orderItemModel.setQuantity(data.getQuantity());
             ProductModel productModel = productRepo.findById((long) data.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Customer not found"));
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            orderItemModel.setProductId(productModel);
+            orderItemModel.setPotion(data.getPotion());
+            saveAllOrderData.add(orderItemModel);
+        }
+        return saveAllOrderData;
+    }
+    private List<OrderItemModel> upgradeOrderItemModel(OrderDto orderDto, OrderModel saveOrder) {
+        List<OrderItemModel> saveAllOrderData = new LinkedList<>();
+        double calculateTotal = saveOrder.getTotalPrice()+orderDto.getPrice();
+        saveOrder.setTotalPrice(calculateTotal);
+        orderRepo.save(saveOrder);
+        for (OrderItemDto data : orderDto.getOrderItems()) {
+            OrderItemModel orderItemModel = new OrderItemModel();
+            orderItemModel.setOrderId(saveOrder);
+            orderItemModel.setPrice(data.getPrice());
+            orderItemModel.setQuantity(data.getQuantity());
+            ProductModel productModel = productRepo.findById((long) data.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
             orderItemModel.setProductId(productModel);
             orderItemModel.setPotion(data.getPotion());
             saveAllOrderData.add(orderItemModel);
@@ -116,6 +163,7 @@ public class OrderServiceImpl implements OrderService {
         orderModel.setCustomerId(customerModel);
         orderModel.setCreateBy(orderDto.getCreateBy());
         orderModel.setTotalPrice(orderDto.getPrice());
+        orderModel.setTime(orderDto.getTime());
         return orderModel;
     }
 }

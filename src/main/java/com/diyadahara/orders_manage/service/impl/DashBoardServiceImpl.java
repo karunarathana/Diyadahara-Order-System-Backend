@@ -49,7 +49,7 @@ public class DashBoardServiceImpl implements DashBoardService {
             baseDashBoardResponse.setTodayOrders(allOrdersItems.size());
             baseDashBoardResponse.setAllProduct(allProduct.size());
             baseDashBoardResponse.setTotalRevenue(calculateTodayRevenue(allOrders));
-            baseDashBoardResponse.setCompletedOrders(calculateSuccessOrders(allOrders));
+            baseDashBoardResponse.setCompletedOrders(calculateSuccessOrders(allOrdersItems));
             baseDashBoardResponse.setPendingOrders(calculatePendingOrders(allOrders));
             logger.info("Method Execution Completed In sendAllDashBoardDetails |Response={}",baseDashBoardResponse);
             return baseDashBoardResponse;
@@ -90,9 +90,9 @@ public class DashBoardServiceImpl implements DashBoardService {
         }
         return totalCanselOrder;
     }
-    private int calculateSuccessOrders(List<OrderModel> customerOrders){
+    private int calculateSuccessOrders(List<OrderItemModel> customerOrders){
         int totalSuccessOrder = 0;
-        for(OrderModel items:customerOrders){
+        for(OrderItemModel items:customerOrders){
             if(items.getStatus().equals(OrderStatus.SOLD)){
                 totalSuccessOrder+=1;
             }

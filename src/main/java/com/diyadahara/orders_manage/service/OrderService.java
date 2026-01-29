@@ -7,5 +7,6 @@ import com.diyadahara.orders_manage.response.BaseOrderResponse;
 public interface OrderService {
     String createOrder(OrderDto orderDto);
     BaseOrderResponse viewOrderByCustomerPhoneNumber(String customerPhoneNumber);
-    String changeOrderStatus(int orderId, String status);
+    String changeOrderStatus(int orderId);
+    String deleteOrder(int orderId);
 }

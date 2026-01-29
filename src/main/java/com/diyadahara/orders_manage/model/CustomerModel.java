@@ -19,7 +19,6 @@ public class CustomerModel {
     private Long customerID;
 
     @Email(message = "Invalid email format")
-    @Column(unique = true)
     private String customerEmail;
 
     private String customerName;

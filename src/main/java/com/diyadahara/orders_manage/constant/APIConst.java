@@ -18,7 +18,7 @@ public class APIConst {
 
     public static final String CREATE_ORDER = "/create-order";
     public static final String VIEW_ALL_ORDER_SINGLE_CUSTOMER = "/view-order-relevant-customer";
-    public static final String DELETE_SINGLE_ORDER = "/delete-customer";
+    public static final String DELETE_SINGLE_ORDER = "/delete-order";
     public static final String UPDATE_SINGLE_ORDER = "/update-customer";
     public static final String CHANGE_SINGLE_ORDER_STATUS = "/change-order-status";
 

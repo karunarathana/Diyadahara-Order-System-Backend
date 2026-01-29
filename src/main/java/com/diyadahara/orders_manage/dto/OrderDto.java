@@ -6,6 +6,7 @@ public class OrderDto {
     private int customerId;
     private double price;
     private String createBy;
+    private String time;
     private List<OrderItemDto> orderItems;
 
     public int getCustomerId() {
@@ -38,5 +39,13 @@ public class OrderDto {
 
     public void setCreateBy(String createBy) {
         this.createBy = createBy;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

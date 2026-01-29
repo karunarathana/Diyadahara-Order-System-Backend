@@ -26,6 +26,8 @@ public class OrderModel {
 
     private double totalPrice;
 
+    private String time;
+
     @CreationTimestamp
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -87,5 +89,13 @@ public class OrderModel {
 
     public void setCustomerId(CustomerModel customerId) {
         this.customerId = customerId;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

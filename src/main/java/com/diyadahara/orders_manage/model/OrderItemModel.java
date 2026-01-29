@@ -1,6 +1,8 @@
 package com.diyadahara.orders_manage.model;
 
+import com.diyadahara.orders_manage.config.OrderStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 
 @Entity
 @Table(name = "t_order_item")
@@ -13,8 +15,15 @@ public class OrderItemModel {
     private double price;
     private String potion;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    @Builder.Default
+    private OrderStatus status = OrderStatus.PENDING;
+
     // Order relationship
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(
+            fetch = FetchType.LAZY
+    )
     @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "fk_user_order_item"))
     private OrderModel orderId;
 
@@ -69,5 +78,13 @@ public class OrderItemModel {
 
     public void setPotion(String potion) {
         this.potion = potion;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }
