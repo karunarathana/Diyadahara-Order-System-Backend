@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -61,6 +63,12 @@ public class DashBoardServiceImpl implements DashBoardService {
         double totalOrderRevenue = 0.0;
         for(OrderModel items:customerOrders){
             totalOrderRevenue+=items.getTotalPrice();
+        }
+        LocalDateTime dateTime = LocalDateTime.parse(customerOrders.get(0).getCreatedAt().toString());
+        LocalDate date = dateTime.toLocalDate();
+        System.out.println(date);
+        if (date.equals(LocalDate.now())) {
+            System.out.println("✅ Same date");
         }
         return totalOrderRevenue;
     }
